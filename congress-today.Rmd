@@ -30,7 +30,7 @@ Here are the scripts sourced by this project (stored in R subdirectory):
 
 ```
 
-## Data
+## Data: Congress demographics
 
 Data was originally obtained on Github, and can be accessed from [here](https://github.com/fivethirtyeight/data/tree/master/congress-demographics). A full data dictionary is also available at that location (README.md). 
 
@@ -42,19 +42,31 @@ raw_df <- read.csv('data/data_aging_congress.csv')
 
 ```{r process}
 work_df <- raw_df %>%
-  mutate(year = year(start_date))
+  mutate(year = year(start_date),
+         generation_ord = factor(generation,
+                                 levels = c('Gen Z', 'Millennial', 'Gen X',
+                                            'Boomers', 'Silent', 'Greatest', 
+                                            'Lost', 'Missionary', 'Progressive',
+                                            'Gilded')))
 ```
 
 
-## Figure 1
-```{r}
+## Figure 1: Median age by year and chamber
+```{r data1, message=F}
 fig1_df <- work_df %>% 
   group_by(year, chamber) %>%
   summarize(median_age = median(age_years)) %>%
   ungroup()
 ```
 
-```{r}
+```{r text1}
+title1 = "The House and Senate are older than ever before"
+subtitle1 = "Median age of the U.S. Senate and U.S. House by Congress, 1919 to 2023"
+caption1 = "Data is based on all members who served in either the Senate or House in each Congress,\nwhich is notated by the year in which it was seated. Any member who served in both chambers\nin the same Congress was assigned to the chamber in which they cast more votes."
+```
+
+
+```{r fig1}
 fig1 <- fig1_df %>%
   ggplot(aes(x=year, y=median_age, col=chamber)) +
   geom_step(linewidth=0.75) +
@@ -70,30 +82,50 @@ fig1 <- fig1_df %>%
         legend.justification = 'left',
         plot.caption = element_text(hjust=0)) +
   labs(x='', y='', col='',
-       title = "The House and Senate are older than ever before",
-       subtitle = "Median age of the U.S. Senate and U.S. House by Congress, 1919 to 2023",
-       caption = "Data is based on all members who served in either the Senate or House in each Congress,\nwhich is notated by the year in which it was seated. Any member who served in both chambers\nin the same Congress was assigned to the chamber in which they cast more votes.") 
+       title=title1, subtitle=subtitle1, caption=caption1) 
 ```
 
-```{r}
+```{r plot1}
 fig1
 ```
 
-## Figure 2
+## Figure 2: Proportion of members by year and generation
 
-```{r}
+```{r data2, message=F}
 fig2_df <- work_df %>%
-  group_by(year, generation) %>%
+  group_by(year, generation_ord) %>%
   summarize(n_gen = n()) %>%
-  mutate(prop_gen = n_gen / sum(n_gen) * 100) %>%
+  mutate(prop_gen = round(n_gen / sum(n_gen), 3)*100) %>%
   ungroup()
 ```
 
-```{r}
-# fig2 <- fig2_df %>%
-#   ggplot(aes(x=year, y=prop_gen, fill=generation)) +
-#   geom_area(position='stack', alpha=0.75)
-# 
-# fig2
+```{r text2}
+title2 = "Baby boomers are the biggest generation in Congress today"
+subtitle2 = "Share of members in Congress from each generation, 1919 to 2023"
+caption2 = "Birth years for the Greatest Generation to Generation Z are based on Pew Research Center definitions. For earlier\ngenerations, definitions are based on Strauss and Howe (1991). They are: Gilded (1822-1842),\nProgressive (1843-1859), Missionary (1860-1882), Lost (1883-1900), Greatest (1901-1927), Silent (1928-1945),\nbaby boomer (1946-1964), Generation X (1965-1980), millennial (1981-1996), Generation Z (1997-2012)."
+```
+
+
+```{r fig2}
+fig2 <- fig2_df %>%
+  ggplot(aes(x=year, y=prop_gen, fill=generation_ord)) +
+  geom_area(position='stack', alpha=0.75) +
+  theme_bw() +
+  scale_x_continuous(breaks = seq(1920, 2020, 20), limits = c(1919, 2023)) +
+  scale_y_continuous(breaks = seq(0, 100, 20), limits = c(0, 101)) +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        panel.border = element_blank(),
+        plot.title = element_text(face = "bold"),
+        legend.position = 'top', 
+        legend.justification = 'left',
+        plot.caption = element_text(hjust=0)) +
+  labs(x='', y='', fill='',
+       title = title2, subtitle = subtitle2, caption = caption2) 
+```
+
+```{r plot2}
+fig2
 ```
 
