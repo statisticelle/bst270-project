@@ -1,0 +1,48 @@
+---
+title: "Reproduction of Congress Today"
+author: "Davies Smith, Emma"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+## Dependencies
+
+Here are the libraries required by this project:
+```{r libraries}
+library(tidyverse)
+library(ggplotly)
+```
+
+Here are the scripts sourced by this project (stored in R subdirectory):
+```{r scripts}
+
+```
+
+## Data
+
+Data was originally obtained on Github, and can be accessed from [here](https://github.com/fivethirtyeight/data/tree/master/congress-demographics). A full data dictionary is also available at that location, as README.md. 
+
+The data is also stored in CSV format within the data subdirectory. Variables relevant to the project, and their description, are provided alongside each figure.
+
+```{r data}
+
+```
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
