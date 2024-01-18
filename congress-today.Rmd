@@ -81,15 +81,16 @@ fig1
 ```
 
 ### Comparison
-The reproduced Figure 1 is almost identical to the original. Trends in the two lines are the same, but the last time point appears to differ slightly. 
+The reproduced Figure 1 is almost identical to the original. Trends in the two lines are the same, but behaviour of the last time point appears to differ slightly. If we investigate the data, and cross-reference the original figure, it appears that the estimated median age is correct for 2023. That is, the median ages in 2023 were 57.8 and 65.3 for House and Senate members, respectively. I believe this discrepancy in the last time point is due to how I defined steps in my `ggplot2` object, e.g., I may need to modify `geom_step` to specify `direction = 'mid'`.
+
 
 ```{r, message=F}
 work_df %>% 
   group_by(year, chamber) %>%
   summarize(median_age = median(age_years)) %>%
-  arrange(-year)
+  arrange(-year) %>%
+  head()
 ```
-
 
 ## Figure 2: Proportion of generation by year
 
@@ -107,3 +108,4 @@ fig2
 ```
 
 ### Comparison
+The reproduced figure is basically identical to the original figure. There are some white gaps at the top of the figure, towards 100%, for some generations. These gaps are caused by rounding errors, since this is a stacked area plot, with the y-axis corresponding to estimated proportion.

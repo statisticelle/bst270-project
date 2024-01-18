@@ -471,27 +471,29 @@ fig1</code></pre>
 <div id="comparison" class="section level3">
 <h3>Comparison</h3>
 <p>The reproduced Figure 1 is almost identical to the original. Trends
-in the two lines are the same, but the last time point appears to differ
-slightly.</p>
+in the two lines are the same, but behaviour of the last time point
+appears to differ slightly. If we investigate the data, and
+cross-reference the original figure, it appears that the estimated
+median age is correct for 2023. That is, the median ages in 2023 were
+57.8 and 65.3 for House and Senate members, respectively. I believe this
+discrepancy in the last time point is due to how I defined steps in my
+<code>ggplot2</code> object, e.g., I may need to modify
+<code>geom_step</code> to specify <code>direction = &#39;mid&#39;</code>.</p>
 <pre class="r"><code>work_df %&gt;% 
   group_by(year, chamber) %&gt;%
   summarize(median_age = median(age_years)) %&gt;%
-  arrange(-year)</code></pre>
-<pre><code>## # A tibble: 106 × 3
-## # Groups:   year [53]
-##     year chamber median_age
-##    &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt;
-##  1  2023 House         57.8
-##  2  2023 Senate        65.3
-##  3  2021 House         58.3
-##  4  2021 Senate        64.3
-##  5  2019 House         57.8
-##  6  2019 Senate        63.3
-##  7  2017 House         58.1
-##  8  2017 Senate        62.6
-##  9  2015 House         57.5
-## 10  2015 Senate        61.3
-## # ℹ 96 more rows</code></pre>
+  arrange(-year) %&gt;%
+  head()</code></pre>
+<pre><code>## # A tibble: 6 × 3
+## # Groups:   year [3]
+##    year chamber median_age
+##   &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt;
+## 1  2023 House         57.8
+## 2  2023 Senate        65.3
+## 3  2021 House         58.3
+## 4  2021 Senate        64.3
+## 5  2019 House         57.8
+## 6  2019 Senate        63.3</code></pre>
 </div>
 </div>
 <div id="figure-2-proportion-of-generation-by-year" class="section level2">
@@ -510,6 +512,11 @@ fig2</code></pre>
 </div>
 <div id="comparison-1" class="section level3">
 <h3>Comparison</h3>
+<p>The reproduced figure is basically identical to the original figure.
+There are some white gaps at the top of the figure, towards 100%, for
+some generations. These gaps are caused by rounding errors, since this
+is a stacked area plot, with the y-axis corresponding to estimated
+proportion.</p>
 </div>
 </div>
 
