@@ -27,7 +27,6 @@ The original figures are presented here alongside their respective reproduction,
 Here are the libraries required by this project:
 ```{r libraries, message=F}
 library(tidyverse)
-library(ggrepel)
 ```
 
 Here are the scripts sourced by this project (stored in R subdirectory):
