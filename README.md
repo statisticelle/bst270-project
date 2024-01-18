@@ -1,8 +1,7 @@
-Author: Emma Davies Smith
-E-mail: esmith (at) hsph.harvard.edu
+# bst270-project
+Author: Emma Davies Smith [esmith (at) hsph.harvard.edu]
 Date: Jan 18 2024
 
-# bst270-project
 The goal of this project is to recreate two figures from a 538 article. 
 
 I chose the article "Congress Today Is Older Than It's Ever Been," which can be accessed at: https://fivethirtyeight.com/features/aging-congress-boomers/
