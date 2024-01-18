@@ -14,4 +14,4 @@ I chose the article "Congress Today Is Older Than It's Ever Been," which can be 
 
 Raw data was obtained from Github: https://github.com/fivethirtyeight/data/tree/master/congress-demographics
 
-
+`congress-today.Rmd` is an RMarkdown file containing all the details of reproduction using R. Results can be found in `congress-today.html`.
