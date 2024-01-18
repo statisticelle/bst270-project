@@ -13,9 +13,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+My BST270 project recreates two figures from the 538 article, [Congress Today Is Older Than It's Ever Been](https://fivethirtyeight.com/features/aging-congress-boomers/):
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+1. The first figure, titled "The House and Senate are older than ever before," is a step plot of the median age of Congress members by year and chamber since 1919. 
+
+2. The second figure, titled "Baby boomers are the biggest generation in Congress today," is a stacked area plot of the proportion of Congress members by year and generation.
+
+The original figures are presented here alongside their respective reproduction, and compared. In general, reproduction appeared to be very successful, with reproduced plots appearing almost identical to those previously reported.
+
 
 ## Dependencies
 
@@ -27,18 +32,29 @@ library(ggrepel)
 
 Here are the scripts sourced by this project (stored in R subdirectory):
 ```{r scripts}
-
+source('R/fig1.R')
+source('R/fig2.R')
 ```
 
 ## Data: Congress demographics
 
-Data was originally obtained on Github, and can be accessed from [here](https://github.com/fivethirtyeight/data/tree/master/congress-demographics). A full data dictionary is also available at that location (README.md). 
-
-A copy of the data is stored in CSV format within the data subdirectory. Variables relevant to the project, and their description, are also provided with each figure.
+### Raw
+Raw data was obtained from Github, and can be accessed from [here](https://github.com/fivethirtyeight/data/tree/master/congress-demographics). A full data dictionary is also available at that location (README.md). A copy of the data is stored in CSV format within the data subdirectory.
 
 ```{r import}
 raw_df <- read.csv('data/data_aging_congress.csv')
 ```
+
+The first three records look like this:
+```{r}
+head(raw_df, 3)
+```
+
+### Processed
+The following chunk processes the raw data: 
+
+1. The figures I recreated are visualizations of time series, with year as the time unit on the x-axis. `year` is extracted from the `start_date` of each congress member's term.
+2. Each congress member is classified based on their birthday into a `generation`. New variable `generation_ord` is a factor which reorders the levels of generation from youngest, or most recent, to older, or latest. This ordering is necessary to recreate Figure 2.
 
 ```{r process}
 work_df <- raw_df %>%
@@ -52,80 +68,42 @@ work_df <- raw_df %>%
 
 
 ## Figure 1: Median age by year and chamber
-```{r data1, message=F}
-fig1_df <- work_df %>% 
-  group_by(year, chamber) %>%
-  summarize(median_age = median(age_years)) %>%
-  ungroup()
-```
 
-```{r text1}
-title1 = "The House and Senate are older than ever before"
-subtitle1 = "Median age of the U.S. Senate and U.S. House by Congress, 1919 to 2023"
-caption1 = "Data is based on all members who served in either the Senate or House in each Congress,\nwhich is notated by the year in which it was seated. Any member who served in both chambers\nin the same Congress was assigned to the chamber in which they cast more votes."
-```
+### Original figure
+<center>
+[<img src='fig/fig1_original.png'>](https://fivethirtyeight.com/features/aging-congress-boomers/#:~:text=in%201913.-,%22%3E2,-What%E2%80%99s%20behind%20these)
+</center>
 
-
-```{r fig1}
-fig1 <- fig1_df %>%
-  ggplot(aes(x=year, y=median_age, col=chamber)) +
-  geom_step(linewidth=0.75) +
-  theme_bw() +
-  scale_x_continuous(breaks = seq(1920, 2020, 20), limits = c(1919, 2023)) +
-  scale_y_continuous(breaks = seq(45, 65, 5), limits = c(45, 66)) +
-  theme(panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        panel.border = element_blank(),
-        plot.title = element_text(face = "bold"),
-        legend.position = 'top', 
-        legend.justification = 'left',
-        plot.caption = element_text(hjust=0)) +
-  labs(x='', y='', col='',
-       title=title1, subtitle=subtitle1, caption=caption1) 
-```
-
-```{r plot1}
+### Reproduced figure
+```{r plot1, fig.align='center', message=F}
+fig1 <- gen_fig1(work_df)
 fig1
 ```
 
-## Figure 2: Proportion of members by year and generation
+### Comparison
+The reproduced Figure 1 is almost identical to the original. Trends in the two lines are the same, but the last time point appears to differ slightly. 
 
-```{r data2, message=F}
-fig2_df <- work_df %>%
-  group_by(year, generation_ord) %>%
-  summarize(n_gen = n()) %>%
-  mutate(prop_gen = round(n_gen / sum(n_gen), 3)*100) %>%
-  ungroup()
-```
-
-```{r text2}
-title2 = "Baby boomers are the biggest generation in Congress today"
-subtitle2 = "Share of members in Congress from each generation, 1919 to 2023"
-caption2 = "Birth years for the Greatest Generation to Generation Z are based on Pew Research Center definitions. For earlier\ngenerations, definitions are based on Strauss and Howe (1991). They are: Gilded (1822-1842),\nProgressive (1843-1859), Missionary (1860-1882), Lost (1883-1900), Greatest (1901-1927), Silent (1928-1945),\nbaby boomer (1946-1964), Generation X (1965-1980), millennial (1981-1996), Generation Z (1997-2012)."
+```{r, message=F}
+work_df %>% 
+  group_by(year, chamber) %>%
+  summarize(median_age = median(age_years)) %>%
+  arrange(-year)
 ```
 
 
-```{r fig2}
-fig2 <- fig2_df %>%
-  ggplot(aes(x=year, y=prop_gen, fill=generation_ord)) +
-  geom_area(position='stack', alpha=0.75) +
-  theme_bw() +
-  scale_x_continuous(breaks = seq(1920, 2020, 20), limits = c(1919, 2023)) +
-  scale_y_continuous(breaks = seq(0, 100, 20), limits = c(0, 101)) +
-  theme(panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        panel.border = element_blank(),
-        plot.title = element_text(face = "bold"),
-        legend.position = 'top', 
-        legend.justification = 'left',
-        plot.caption = element_text(hjust=0)) +
-  labs(x='', y='', fill='',
-       title = title2, subtitle = subtitle2, caption = caption2) 
-```
+## Figure 2: Proportion of generation by year
 
-```{r plot2}
+### Original figure
+
+<center>
+[<img src='fig/fig2_original.png'>](https://fivethirtyeight.com/features/aging-congress-boomers/#:~:text=in%20the%20mid%2D-,2010s.,-Thanks%20to%20their)
+</center>
+
+### Reproduced figure
+
+```{r plot2, fig.align='center', message=F}
+fig2 <- gen_fig2(work_df)
 fig2
 ```
 
+### Comparison
